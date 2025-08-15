@@ -1,186 +1,170 @@
 <template>
   <div>
-    <panel>
-      <div slot="title">选择题统计</div>
-      <div class="container">
-        <!-- 总体统计 -->
-        <el-row :gutter="20" class="mb-4">
-          <el-col :span="6">
-            <el-card class="stat-card">
-              <div class="stat-content">
-                <div class="stat-number">{{ overallStats.totalProblems }}</div>
-                <div class="stat-label">总题目数</div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="stat-card">
-              <div class="stat-content">
-                <div class="stat-number">{{ overallStats.totalSubmissions }}</div>
-                <div class="stat-label">总提交数</div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="stat-card">
-              <div class="stat-content">
-                <div class="stat-number">{{ overallStats.totalUsers }}</div>
-                <div class="stat-label">活跃用户数</div>
-              </div>
-            </el-card>
-          </el-col>
-          <el-col :span="6">
-            <el-card class="stat-card">
-              <div class="stat-content">
-                <div class="stat-number">{{ overallStats.averageAccuracy }}%</div>
-                <div class="stat-label">平均正确率</div>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-        
-        <!-- 难度分布 -->
-        <el-row :gutter="20" class="mb-4">
-          <el-col :span="12">
-            <el-card>
-              <div slot="header">难度分布</div>
-              <div ref="difficultyChart" style="height: 300px;"></div>
-            </el-card>
-          </el-col>
-          <el-col :span="12">
-            <el-card>
-              <div slot="header">正确率分布</div>
-              <div ref="accuracyChart" style="height: 300px;"></div>
-            </el-card>
-          </el-col>
-        </el-row>
-        
-        <!-- 提交趋势 -->
-        <el-row :gutter="20" class="mb-4">
-          <el-col :span="24">
-            <el-card>
-              <div slot="header">
-                <span>提交趋势</span>
-                <el-date-picker
-                  v-model="dateRange"
-                  type="daterange"
-                  align="right"
-                  size="small"
-                  style="float: right; margin-top: -5px;"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期">
-                </el-date-picker>
-              </div>
-              <div ref="trendChart" style="height: 300px;"></div>
-            </el-card>
-          </el-col>
-        </el-row>
-        
-        <!-- 热门题目 & 用户排行 -->
-        <el-row :gutter="20" class="mb-4">
-          <el-col :span="12">
-            <el-card>
-              <div slot="header">热门题目</div>
-              <el-table :data="popularProblems" size="small" stripe>
-                <el-table-column prop="title" label="题目" width="180">
-                  <template slot-scope="scope">
-                    <el-button type="text" @click="showProblemAnalysis(scope.row.id)">
-                      {{ scope.row.title }}
-                    </el-button>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="submission_count" label="提交数" width="80"></el-table-column>
-                <el-table-column prop="accuracy" label="正确率">
-                  <template slot-scope="scope">
-                    <el-tag :type="getAccuracyColor(scope.row.accuracy)" size="small">
-                      {{ scope.row.accuracy }}%
-                    </el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-          </el-col>
-          <el-col :span="12">
-            <el-card>
-              <div slot="header">用户排行</div>
-              <el-table :data="topUsers" size="small" stripe>
-                <el-table-column prop="rank" label="排名" width="60">
-                  <template slot-scope="scope">
-                    <el-tag :type="getRankColor(scope.row.rank)" size="small" v-if="scope.row.rank <= 3">
-                      {{ scope.row.rank }}
-                    </el-tag>
-                    <span v-else>{{ scope.row.rank }}</span>
-                  </template>
-                </el-table-column>
-                <el-table-column prop="username" label="用户名" width="120"></el-table-column>
-                <el-table-column prop="correct_count" label="正确数" width="80"></el-table-column>
-                <el-table-column prop="accuracy" label="正确率">
-                  <template slot-scope="scope">
-                    <el-tag :type="getAccuracyColor(scope.row.accuracy)" size="small">
-                      {{ scope.row.accuracy }}%
-                    </el-tag>
-                  </template>
-                </el-table-column>
-              </el-table>
-            </el-card>
-          </el-col>
-        </el-row>
-        
-        <!-- 标签统计 -->
-        <el-row :gutter="20">
-          <el-col :span="24">
-            <el-card>
-              <div slot="header">标签统计</div>
-              <div class="tag-cloud">
-                <el-tag
-                  v-for="tag in tagStats"
-                  :key="tag.name"
-                  :style="getTagStyle(tag.count)"
-                  class="tag-item"
-                  @click="filterByTag(tag.name)">
-                  {{ tag.name }} ({{ tag.count }})
+    <el-row :gutter="20">
+      <!-- 总体统计 -->
+      <el-col :span="24">
+        <panel title="选择题统计">
+          <el-row :gutter="20">
+            <el-col :span="6">
+              <el-card shadow="hover" class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-number">{{ overallStats.totalProblems }}</div>
+                  <div class="stat-label">题目总数</div>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card shadow="hover" class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-number">{{ overallStats.totalSubmissions }}</div>
+                  <div class="stat-label">提交总数</div>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card shadow="hover" class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-number">{{ overallStats.totalUsers }}</div>
+                  <div class="stat-label">活跃用户</div>
+                </div>
+              </el-card>
+            </el-col>
+            <el-col :span="6">
+              <el-card shadow="hover" class="stat-card">
+                <div class="stat-content">
+                  <div class="stat-number">{{ overallStats.averageAccuracy }}%</div>
+                  <div class="stat-label">平均正确率</div>
+                </div>
+              </el-card>
+            </el-col>
+          </el-row>
+        </panel>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <!-- 难度分布 -->
+      <el-col :span="12">
+        <panel title="难度分布">
+          <div ref="difficultyChart" style="height: 300px;"></div>
+        </panel>
+      </el-col>
+      
+      <!-- 正确率分布 -->
+      <el-col :span="12">
+        <panel title="正确率分布">
+          <div ref="accuracyChart" style="height: 300px;"></div>
+        </panel>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <!-- 提交趋势 -->
+      <el-col :span="24">
+        <panel title="提交趋势">
+          <div slot="header">
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              @change="updateTrendChart">
+            </el-date-picker>
+          </div>
+          <div ref="trendChart" style="height: 400px;"></div>
+        </panel>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <!-- 热门题目 -->
+      <el-col :span="12">
+        <panel title="热门题目">
+          <el-table :data="popularProblems" style="width: 100%">
+            <el-table-column prop="title" label="题目" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="submission_count" label="提交数" width="120" sortable></el-table-column>
+            <el-table-column prop="accuracy" label="正确率" width="100">
+              <template slot-scope="scope">
+                <el-tag :type="getAccuracyColor(scope.row.accuracy)" size="small">
+                  {{ scope.row.accuracy }}%
                 </el-tag>
-              </div>
-            </el-card>
-          </el-col>
-        </el-row>
-      </div>
-    </panel>
-    
-    <!-- 题目详细分析对话框 -->
-    <el-dialog
-      title="题目分析"
-      :visible.sync="analysisDialogVisible"
-      width="70%">
-      <div v-loading="loadingAnalysis">
-        <el-tabs v-model="activeTab">
-          <el-tab-pane label="提交记录" name="submissions">
-            <el-table :data="problemAnalysis.submissions" size="small" stripe>
-              <el-table-column prop="username" label="用户名" width="120"></el-table-column>
-              <el-table-column prop="is_correct" label="结果" width="80">
-                <template slot-scope="scope">
-                  <el-tag :type="scope.row.is_correct ? 'success' : 'danger'" size="small">
-                    {{ scope.row.is_correct ? '正确' : '错误' }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column prop="submit_time" label="提交时间">
-                <template slot-scope="scope">
-                  {{ scope.row.submit_time | localtime }}
-                </template>
-              </el-table-column>
-              <el-table-column prop="selected_option" label="选择" width="80"></el-table-column>
-            </el-table>
-          </el-tab-pane>
-          <el-tab-pane label="选项分析" name="options">
-            <div ref="optionChart" style="height: 400px;"></div>
-          </el-tab-pane>
-          <el-tab-pane label="时间分析" name="time">
-            <div ref="timeChart" style="height: 400px;"></div>
-          </el-tab-pane>
-        </el-tabs>
-      </div>
+              </template>
+            </el-table-column>
+          </el-table>
+        </panel>
+      </el-col>
+      
+      <!-- 用户排行 -->
+      <el-col :span="12">
+        <panel title="用户排行">
+          <el-table :data="topUsers" style="width: 100%">
+            <el-table-column prop="rank" label="排名" width="60">
+              <template slot-scope="scope">
+                <el-tag v-if="scope.row.rank <= 3" :type="getRankColor(scope.row.rank)" size="small">
+                  {{ scope.row.rank }}
+                </el-tag>
+                <span v-else>{{ scope.row.rank }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column prop="username" label="用户名" show-overflow-tooltip></el-table-column>
+            <el-table-column prop="correct_count" label="正确数" width="80"></el-table-column>
+            <el-table-column prop="accuracy" label="正确率" width="100">
+              <template slot-scope="scope">
+                {{ scope.row.accuracy }}%
+              </template>
+            </el-table-column>
+          </el-table>
+        </panel>
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="20" style="margin-top: 20px;">
+      <!-- 标签统计 -->
+      <el-col :span="24">
+        <panel title="标签统计">
+          <div class="tag-cloud">
+            <el-tag
+              v-for="tag in tagStats"
+              :key="tag.name"
+              :style="getTagStyle(tag.count)"
+              class="tag-item"
+              @click="filterByTag(tag.name)">
+              {{ tag.name }} ({{ tag.count }})
+            </el-tag>
+          </div>
+        </panel>
+      </el-col>
+    </el-row>
+
+    <!-- 详细分析对话框 -->
+    <el-dialog title="题目分析" :visible.sync="analysisDialogVisible" width="80%">
+      <el-tabs v-model="activeTab">
+        <el-tab-pane label="提交详情" name="submissions">
+          <el-table :data="problemAnalysis.submissions" v-loading="loadingAnalysis">
+            <el-table-column prop="user.username" label="用户"></el-table-column>
+            <el-table-column prop="result" label="结果">
+              <template slot-scope="scope">
+                <el-tag :type="scope.row.result === 'Accepted' ? 'success' : 'danger'" size="small">
+                  {{ scope.row.result }}
+                </el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="submit_time" label="提交时间">
+              <template slot-scope="scope">
+                {{ scope.row.submit_time | localtime }}
+              </template>
+            </el-table-column>
+            <el-table-column prop="selected_option" label="选择" width="80"></el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="选项分析" name="options">
+          <div ref="optionChart" style="height: 400px;"></div>
+        </el-tab-pane>
+        <el-tab-pane label="时间分析" name="time">
+          <div ref="timeChart" style="height: 400px;"></div>
+        </el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>
