@@ -20,6 +20,13 @@
       <el-menu-item index="/problem/batch_ops">{{$t('m.Export_Import_Problem')}}</el-menu-item>
 
     </el-submenu>
+    <el-submenu index="choice" v-if="hasProblemPermission">
+      <template slot="title"><i class="el-icon-fa-check-square"></i>选择题</template>
+      <el-menu-item index="/choices">选择题列表</el-menu-item>
+      <el-menu-item index="/choice/create">新建选择题</el-menu-item>
+      <el-menu-item index="/choice/categories">分类管理</el-menu-item>
+      <el-menu-item index="/choice/tags">标签管理</el-menu-item>
+    </el-submenu>
     <el-submenu index="contest">
       <template slot="title"><i class="el-icon-fa-trophy"></i>{{$t('m.Contest')}}</template>
       <el-menu-item index="/contest">{{$t('m.Contest_List')}}</el-menu-item>

@@ -162,6 +162,7 @@ export const m = {
   Management: 'Management',
   Logout: 'Logout',
   Welcome_to: 'Welcome to',
+  NavChoice: 'Choices',
   // announcements.vue
   Refresh: 'Refresh',
   Back: 'Back',

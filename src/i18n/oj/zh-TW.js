@@ -162,6 +162,7 @@ export const m = {
   Management: '後台管理',
   Logout: '登出',
   Welcome_to: '歡迎來到',
+  NavChoice: '選擇題',
   // announcements.vue
   Refresh: '重新整理',
   Back: '返回',
