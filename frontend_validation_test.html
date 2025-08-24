@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>选择题答案验证测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-title {
+            color: #409EFF;
+            border-bottom: 2px solid #409EFF;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .option {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        .option.correct {
+            background: #f0f9ff;
+            border-color: #409EFF;
+        }
+        .test-button {
+            background: #409EFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #66b1ff;
+        }
+        .result {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .result.success {
+            background: #f0f9ff;
+            border: 1px solid #409EFF;
+            color: #409EFF;
+        }
+        .result.error {
+            background: #fef0f0;
+            border: 1px solid #f56c6c;
+            color: #f56c6c;
+        }
+        .result.warning {
+            background: #fdf6ec;
+            border: 1px solid #e6a23c;
+            color: #e6a23c;
+        }
+        .checkbox, .radio {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>选择题答案验证修复测试</h1>
+    
+    <!-- 单选题测试 -->
+    <div class="test-container">
+        <h2 class="test-title">单选题测试</h2>
+        <div class="option">
+            <input type="radio" name="single" value="1" class="radio" id="single1">
+            <label for="single1">选项A</label>
+        </div>
+        <div class="option">
+            <input type="radio" name="single" value="2" class="radio" id="single2">
+            <label for="single2">选项B</label>
+        </div>
+        <div class="option">
+            <input type="radio" name="single" value="3" class="radio" id="single3">
+            <label for="single3">选项C</label>
+        </div>
+        <button class="test-button" onclick="testSingleChoice()">测试单选题提交</button>
+        <div id="single-result"></div>
+    </div>
+    
+    <!-- 多选题测试 -->
+    <div class="test-container">
+        <h2 class="test-title">多选题测试</h2>
+        <div class="option">
+            <input type="checkbox" value="1" class="checkbox" id="multi1">
+            <label for="multi1">选项A</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" value="2" class="checkbox" id="multi2">
+            <label for="multi2">选项B</label>
+        </div>
+        <div class="option">
+            <input type="checkbox" value="3" class="checkbox" id="multi3">
+            <label for="multi3">选项C</label>
+        </div>
+        <button class="test-button" onclick="testMultipleChoice()">测试多选题提交</button>
+        <div id="multi-result"></div>
+    </div>
+    
+    <!-- 测试结果汇总 -->
+    <div class="test-container">
+        <h2 class="test-title">测试结果汇总</h2>
+        <div id="summary"></div>
+    </div>
+
+    <script>
+        // 模拟Vue.js的答案验证逻辑
+        function validateAnswer(options, answer, isMultiple) {
+            const inRange = (n) => Number.isInteger(n) && n >= 1 && n <= options.length;
+            
+            if (isMultiple) {
+                if (!Array.isArray(answer) || answer.length === 0 || !answer.every(inRange)) {
+                    return {
+                        valid: false,
+                        message: '多选题请至少选择一个正确答案！',
+                        type: 'warning'
+                    };
+                }
+            } else {
+                if (answer === null || answer === undefined || !inRange(answer)) {
+                    return {
+                        valid: false,
+                        message: '单选题请选择一个正确答案！',
+                        type: 'warning'
+                    };
+                }
+            }
+            
+            return {
+                valid: true,
+                message: '验证通过！',
+                type: 'success'
+            };
+        }
+        
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="result ${result.type}">${result.message}</div>`;
+        }
+        
+        function testSingleChoice() {
+            const selected = document.querySelector('input[name="single"]:checked');
+            const answer = selected ? parseInt(selected.value) : null;
+            const options = ['选项A', '选项B', '选项C'];
+            
+            const result = validateAnswer(options, answer, false);
+            showResult('single-result', result);
+            
+            updateSummary('single', result.valid, answer);
+        }
+        
+        function testMultipleChoice() {
+            const selected = document.querySelectorAll('input[type="checkbox"]:checked');
+            const answer = Array.from(selected).map(input => parseInt(input.value));
+            const options = ['选项A', '选项B', '选项C'];
+            
+            const result = validateAnswer(options, answer, true);
+            showResult('multi-result', result);
+            
+            updateSummary('multiple', result.valid, answer);
+        }
+        
+        let testResults = {};
+        
+        function updateSummary(testType, passed, answer) {
+            testResults[testType] = { passed, answer };
+            
+            const summary = document.getElementById('summary');
+            let html = '<h3>测试执行情况:</h3>';
+            
+            if (testResults.single) {
+                const status = testResults.single.passed ? '✅ 通过' : '❌ 失败';
+                const answerText = testResults.single.answer ? `选择了选项${testResults.single.answer}` : '未选择答案';
+                html += `<p><strong>单选题:</strong> ${status} (${answerText})</p>`;
+            }
+            
+            if (testResults.multiple) {
+                const status = testResults.multiple.passed ? '✅ 通过' : '❌ 失败';
+                const answerText = testResults.multiple.answer.length > 0 ? 
+                    `选择了选项${testResults.multiple.answer.join(', ')}` : '未选择答案';
+                html += `<p><strong>多选题:</strong> ${status} (${answerText})</p>`;
+            }
+            
+            const totalTests = Object.keys(testResults).length;
+            const passedTests = Object.values(testResults).filter(r => r.passed).length;
+            
+            if (totalTests > 0) {
+                html += `<hr><p><strong>总计:</strong> ${passedTests}/${totalTests} 个测试通过</p>`;
+                
+                if (passedTests === totalTests) {
+                    html += '<p class="result success">🎉 所有测试通过！答案验证逻辑工作正常。</p>';
+                } else {
+                    html += '<p class="result warning">⚠️ 部分测试失败，这是预期的行为（测试未选择答案的情况）。</p>';
+                }
+            }
+            
+            summary.innerHTML = html;
+        }
+        
+        // 页面加载完成后显示说明
+        window.onload = function() {
+            document.getElementById('summary').innerHTML = `
+                <h3>测试说明:</h3>
+                <p>1. <strong>单选题测试:</strong> 先不选择任何选项点击测试（应该显示警告），然后选择一个选项再测试（应该通过）</p>
+                <p>2. <strong>多选题测试:</strong> 先不选择任何选项点击测试（应该显示警告），然后选择一个或多个选项再测试（应该通过）</p>
+                <p>3. 这个测试验证了修复后的前端答案验证逻辑是否正常工作</p>
+            `;
+        };
+    </script>
+</body>
+</html>
