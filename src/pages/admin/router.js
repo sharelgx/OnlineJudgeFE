@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 // 引入 view 组件
 import { Announcement, Conf, Contest, ContestList, Home, JudgeServer, Login,
-  Problem, ProblemList, User, PruneTestCase, Dashboard, ProblemImportOrExport } from './views'
+  Problem, ProblemList, User, PruneTestCase, Dashboard, ProblemImportOrExport, ChoiceList, Choice } from './views'
 Vue.use(VueRouter)
 
 export default new VueRouter({
@@ -69,6 +69,33 @@ export default new VueRouter({
           name: 'problem_batch_ops',
           component: ProblemImportOrExport
         },
+        // ===== Choice management =====
+        {
+          path: '/choices',
+          name: 'choice-list',
+          component: ChoiceList
+        },
+        {
+          path: '/choice/create',
+          name: 'create-choice',
+          component: Choice
+        },
+        {
+          path: '/choice/edit/:choiceId',
+          name: 'edit-choice',
+          component: Choice
+        },
+        {
+          name: 'category-list',
+          path: '/choice/categories',
+          component: () => import('./views/choice/CategoryList.vue')
+        },
+        {
+          name: 'tag-list',
+          path: '/choice/tags',
+          component: () => import('./views/choice/TagList.vue')
+        },
+        // ===== Contest =====
         {
           path: '/contest/create',
           name: 'create-contest',

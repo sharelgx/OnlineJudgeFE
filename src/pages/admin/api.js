@@ -283,6 +283,63 @@ export default {
       data
     })
   },
+  // ==== Choice Management APIs ====
+  getChoiceList (offset, limit, keyword) {
+    let params = { paging: true, offset, limit }
+    if (keyword) params.keyword = keyword
+    return ajax('admin/choice', 'get', { params })
+  },
+  getChoice (id) {
+    return ajax('admin/choice', 'get', { params: { id } })
+  },
+  createChoice (data) {
+    return ajax('admin/choice', 'post', { data })
+  },
+  editChoice (data) {
+    return ajax('admin/choice', 'put', { data })
+  },
+  deleteChoice (id) {
+    return ajax('admin/choice', 'delete', { params: { id } })
+  },
+  // ==== Category Management APIs ====
+  getCategoryList (params) {
+    return ajax('admin/choice/categories', 'get', { params })
+  },
+  getCategory (id) {
+    return ajax('admin/choice/categories', 'get', { params: { id } })
+  },
+  createCategory (data) {
+    return ajax('admin/choice/categories', 'post', { data })
+  },
+  updateCategory (id, data) {
+    return ajax('admin/choice/categories', 'put', { params: { id }, data })
+  },
+  deleteCategory (id) {
+    return ajax('admin/choice/categories', 'delete', { params: { id } })
+  },
+  batchDeleteCategory (ids) {
+    return ajax('admin/choice/categories', 'delete', { data: { ids } })
+  },
+  // ==== Tag Management APIs ====
+  getTagList (params) {
+    return ajax('admin/choice/tags', 'get', { params })
+  },
+  getTag (id) {
+    return ajax('admin/choice/tags', 'get', { params: { id } })
+  },
+  createTag (data) {
+    return ajax('admin/choice/tags', 'post', { data })
+  },
+  updateTag (id, data) {
+    return ajax('admin/choice/tags', 'put', { params: { id }, data })
+  },
+  deleteTag (id) {
+    return ajax('admin/choice/tags', 'delete', { params: { id } })
+  },
+  batchDeleteTag (ids) {
+    return ajax('admin/choice/tags', 'delete', { data: { ids } })
+  },
+  // ================================
   getReleaseNotes () {
     return ajax('admin/versions', 'get')
   },

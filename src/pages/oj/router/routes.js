@@ -14,7 +14,11 @@ import {
   ResetPassword,
   SubmissionDetails,
   SubmissionList,
-  UserHome
+  UserHome,
+  ChoiceList,
+  ChoiceDetail,
+  ChoicePractice,
+  WrongBook
 } from '../views'
 
 import * as Contest from '@oj/views/contest'
@@ -50,6 +54,30 @@ export default [
     path: '/problem',
     meta: {title: 'Problem List'},
     component: ProblemList
+  },
+  {
+    name: 'choice-list',
+    path: '/choice',
+    meta: {title: 'Choice'},
+    component: ChoiceList
+  },
+  {
+    name: 'choice-detail',
+    path: '/choice/:id',
+    meta: {title: 'Choice Detail'},
+    component: ChoiceDetail
+  },
+  {
+    name: 'choice-practice',
+    path: '/choice-practice',
+    meta: {title: 'Choice Practice'},
+    component: ChoicePractice
+  },
+  {
+    name: 'wrong-book',
+    path: '/wrong-book',
+    meta: {title: 'Wrong Book', requiresAuth: true},
+    component: WrongBook
   },
   {
     name: 'problem-details',

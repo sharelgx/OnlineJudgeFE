@@ -244,6 +244,85 @@ export default {
       data
     })
   },
+  // 选择题相关API
+  getChoice (id) {
+    return ajax('choice', 'get', {
+      params: {
+        id
+      }
+    })
+  },
+  getChoiceList (offset, limit, params = {}) {
+    params.limit = limit
+    params.offset = offset
+    return ajax('choice', 'get', {
+      params
+    })
+  },
+  submitChoice (data) {
+    return ajax('choice/submit', 'post', {
+      data
+    })
+  },
+  // 分类相关API
+  getCategoryList (params = {}) {
+    return ajax('choice/categories', 'get', {
+      params
+    })
+  },
+  // 标签相关API
+  getTagList (params = {}) {
+    return ajax('tags', 'get', {
+      params
+    })
+  },
+  createTag (data) {
+    return ajax('tags', 'post', {
+      data
+    })
+  },
+  updateTag (data) {
+    return ajax('tags', 'patch', {
+      data
+    })
+  },
+  deleteTag (id) {
+    return ajax('tags', 'delete', {
+      params: { id }
+    })
+  },
+  // 题目绑定API
+  bindChoiceCategories (data) {
+    return ajax('choice/binding', 'post', {
+      data
+    })
+  },
+  getChoiceBinding (choiceId) {
+    return ajax('choice/binding', 'get', {
+      params: { choice_id: choiceId }
+    })
+  },
+  unbindChoiceCategories (data) {
+    return ajax('choice/binding', 'delete', {
+      data
+    })
+  },
+  // 错题本相关API
+  getWrongChoices (params = {}) {
+    return ajax('wrong-choices', 'get', {
+      params
+    })
+  },
+  updateWrongChoice (data) {
+    return ajax('wrong-choices', 'patch', {
+      data
+    })
+  },
+  deleteWrongChoice (id) {
+    return ajax('wrong-choices', 'delete', {
+      params: { id }
+    })
+  },
   getUserRank (offset, limit, rule = 'acm') {
     let params = {
       offset,
@@ -268,7 +347,8 @@ export default {
     return ajax('admin/contest/acm_helper', 'put', {
       data
     })
-  }
+  },
+  // 移除重复的选择题API定义，以上为最终生效的方法
 }
 
 /**
