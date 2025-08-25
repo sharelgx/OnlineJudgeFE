@@ -51,7 +51,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="标签">
-                <el-select v-model="choice.tagIds" multiple filterable placeholder="选择标签">
+                <el-select v-model="choice.tag_ids" multiple filterable placeholder="选择标签">
                   <el-option v-for="tag in tagList" :key="tag.id" :label="tag.name" :value="tag.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -140,9 +140,8 @@ export default {
         difficulty: 'Low',
         multiple: false,
         is_public: true,
-        tags: [],
         categories: [],
-        tagIds: [],
+        tag_ids: [],
         options: [ { text: '', correct: false }, { text: '', correct: false } ]
       },
       rules: {}
@@ -205,9 +204,8 @@ export default {
         this.choice.description = d.description || ''
         this.choice.explanation = d.explanation || d.analysis || ''
         this.choice.difficulty = d.difficulty || 'Low'
-        this.choice.tags = d.tags || []
         this.choice.categories = d.categories || []
-        this.choice.tagIds = d.tag_ids || []
+        this.choice.tag_ids = d.tag_ids || []
         this.choice.multiple = !!d.multiple
         this.choice.is_public = d.is_public !== undefined ? !!d.is_public : true
         if (Array.isArray(d.options)) {
@@ -282,7 +280,7 @@ export default {
         explanation: this.choice.explanation,
         difficulty: this.choice.difficulty,
         categories: this.choice.categories,
-        tag_ids: this.choice.tagIds,
+        tag_ids: this.choice.tag_ids,
         multiple: this.choice.multiple,
         is_public: this.choice.is_public,
         options: rawOptions.map(o => o.html),
